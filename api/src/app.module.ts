@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ValidacionRutController } from './validacion-rut/validacion-rut.controller';
-import { ValidacionRutService } from './validacion-rut/validacion-rut.service';
+import { ValidacionRutModule } from './validacion-rut/validacion-rut.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController, ValidacionRutController],
-  providers: [AppService, ValidacionRutService],
+  imports: [ValidacionRutModule],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AppModule {}
+// eslint-disable-next-line prettier/prettier
+export class AppModule { }
