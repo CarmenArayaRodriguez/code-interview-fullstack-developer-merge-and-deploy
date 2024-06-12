@@ -1,0 +1,12 @@
+<form (ngSubmit)="onSubmit()">
+  <div>
+    <label for="rut">RUT:</label>
+    <input type="text" id="rut" [(ngModel)]="rut" name="rut" required />
+  </div>
+  <button type="submit">Validar</button>
+</form>
+
+<div *ngIf="resultado">
+  <p *ngIf="resultado.valido">El RUT es válido.</p>
+  <p *ngIf="!resultado.valido">El RUT es inválido.</p>
+</div>
