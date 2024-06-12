@@ -2,8 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ValidacionRutService {
+  private limpiarRut(rut: string): string {
+    return rut.replace(/[^0-9Kk-]/g, ''); // Elimina los caracteres que no están permitidos
+  }
+
   dividirRut(rut: string, separador: string): string[] {
-    rut = rut.replace(/[^0-9Kk-]/g, ''); //Elimina los caracteres que no están permitidos
     const rutDividido = rut.split(separador);
     return rutDividido;
   }
@@ -13,6 +16,7 @@ export class ValidacionRutService {
   }
 
   validarRut(rut: string): boolean {
+    rut = this.limpiarRut(rut); // Limpia primero el RUT
     if (!this.esFormatoValido(rut)) {
       return false;
     }

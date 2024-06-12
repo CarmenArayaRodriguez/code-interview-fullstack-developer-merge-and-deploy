@@ -15,6 +15,7 @@ export class ValidacionRutController {
 
   @Post('/api/validation')
   validarRut(@Body('rut') rut: string): { valido: boolean } {
+    console.log('Recibido RUT para validación:', rut);
     if (!this.validacionRutService.validarRut(rut)) {
       throw new HttpException('RUT inválido', HttpStatus.BAD_REQUEST);
     }
