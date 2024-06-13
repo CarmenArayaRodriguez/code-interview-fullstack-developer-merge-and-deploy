@@ -33,6 +33,7 @@ export class ValidacionRutController {
     console.log('Recibido RUT para validación:', rut);
     try {
       if (!rut) {
+        console.log('RUT no proporcionado');
         res
           .status(HttpStatus.BAD_REQUEST)
           .json({ mensaje: 'RUT es requerido', valido: false });
@@ -41,15 +42,18 @@ export class ValidacionRutController {
 
       const esValido = this.validacionRutService.validarRut(rut);
       if (esValido) {
+        console.log('RUT es válido:', rut);
         res
           .status(HttpStatus.OK)
           .json({ mensaje: 'El RUT es válido.', valido: true });
       } else {
+        console.log('RUT es inválido:', rut);
         res
           .status(HttpStatus.BAD_REQUEST)
           .json({ mensaje: 'El RUT es inválido.', valido: false });
       }
     } catch (error) {
+      console.error('Error interno del servidor durante la validación:', error);
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ mensaje: 'Error interno del servidor', valido: false });
