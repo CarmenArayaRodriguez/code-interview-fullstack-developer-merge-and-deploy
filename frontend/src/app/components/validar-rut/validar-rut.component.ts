@@ -10,6 +10,7 @@ export class ValidarRutComponent {
   rut: string = '';
   resultado: { valido: boolean } | null = null;
   advertencia: string | null = null;
+  error: string | null = null;
   cargando: boolean = false;
 
   constructor(private validarRutService: ValidarRutService) { }
@@ -36,15 +37,17 @@ export class ValidarRutComponent {
 
     this.cargando = true; // Inicia el spinner
 
-    this.validarRutService.validarRut(rutLimpio)
-      .subscribe(response => {
+    this.validarRutService.validarRut(rutLimpio).subscribe(
+      (response) => {
         this.resultado = response;
-        this.cargando = false; // Detiene el spinner
-      }, error => {
+        this.cargando = false;  // Detiene el spinner
+      },
+      (error) => {
         console.error('Error al validar RUT:', error);
-        this.resultado = { valido: false };
-        this.cargando = false; // Detiene el spinner
-      });
+        this.error = 'Error al procesar la validación del RUT.';
+        this.cargando = false;  // Detiene el spinner
+      }
+    );
   }
 
   private esFormatoValido(rut: string): boolean {
