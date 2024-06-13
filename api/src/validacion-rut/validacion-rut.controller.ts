@@ -1,28 +1,52 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpStatus,
-  HttpException,
-} from '@nestjs/common';
-
+import { Controller, Post, Body, HttpStatus, Res } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { ValidacionRutService } from './validacion-rut.service';
 
+@ApiTags('validacion')
 @Controller()
 export class ValidacionRutController {
   // eslint-disable-next-line prettier/prettier
   constructor(private validacionRutService: ValidacionRutService) { }
 
   @Post('/api/validation')
-  validarRut(@Body('rut') rut: string): { valido: boolean } {
+  @ApiOperation({
+    summary: 'Valida un RUT chileno',
+    description:
+      'Valida si un RUT chileno es correcto según el dígito verificador.',
+  })
+  @ApiBody({
+    description: 'Datos del RUT a validar',
+    schema: { example: { rut: '11222333-9' } },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'RUT válido',
+    schema: { example: { mensaje: 'El RUT es válido.', valido: true } },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'RUT inválido',
+    schema: { example: { mensaje: 'El RUT es inválido.', valido: false } },
+  })
+  validarRut(@Body('rut') rut: string, @Res() res: Response): void {
     console.log('Recibido RUT para validación:', rut);
-    console.log('RUT recibido después de limpiar:', rut);
     if (!rut) {
-      throw new HttpException('RUT es requerido', HttpStatus.BAD_REQUEST);
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ mensaje: 'RUT es requerido', valido: false });
+      return;
     }
-    if (!this.validacionRutService.validarRut(rut)) {
-      throw new HttpException('RUT inválido', HttpStatus.BAD_REQUEST);
+
+    const esValido = this.validacionRutService.validarRut(rut);
+    if (esValido) {
+      res
+        .status(HttpStatus.OK)
+        .json({ mensaje: 'El RUT es válido.', valido: true });
+    } else {
+      res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ mensaje: 'El RUT es inválido.', valido: false });
     }
-    return { valido: true };
   }
 }
