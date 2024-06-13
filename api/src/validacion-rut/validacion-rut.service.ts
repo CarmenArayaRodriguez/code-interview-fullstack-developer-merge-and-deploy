@@ -3,16 +3,11 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class ValidacionRutService {
   private limpiarRut(rut: string): string {
-    return rut.replace(/[^0-9Kk-]/g, ''); // Elimina los caracteres que no están permitidos
-  }
-
-  dividirRut(rut: string, separador: string): string[] {
-    const rutDividido = rut.split(separador);
-    return rutDividido;
+    return rut.replace(/[.\-]/g, ''); // Elimina los caracteres que no están permitidos
   }
 
   private esFormatoValido(rut: string): boolean {
-    return /^[0-9]{7,8}-[0-9Kk]$/.test(rut); //Se asegura de que la cadena tenga el formato de RUT
+    return /^[0-9]{7,8}[0-9Kk]$/.test(rut); // Se asegura de que la cadena tenga el formato de RUT
   }
 
   validarRut(rut: string): boolean {
@@ -20,9 +15,8 @@ export class ValidacionRutService {
     if (!this.esFormatoValido(rut)) {
       return false;
     }
-    const rutDividido = this.dividirRut(rut, '-');
-    const cuerpoRut = rutDividido[0];
-    const digitoVerificador = rutDividido[1];
+    const cuerpoRut = rut.slice(0, -1);
+    const digitoVerificador = rut.slice(-1);
 
     return this.validarDigitoVerificador(cuerpoRut, digitoVerificador);
   }
@@ -35,7 +29,7 @@ export class ValidacionRutService {
     let multiplo = 2;
 
     for (let i = cuerpoRut.length - 1; i >= 0; i--) {
-      suma += multiplo * parseInt(cuerpoRut[i], 10); //Se añade para idicar que es de base 10
+      suma += multiplo * parseInt(cuerpoRut[i], 10); // Se añade para indicar que es de base 10
       if (multiplo === 7) {
         multiplo = 2;
       } else {
