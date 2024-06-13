@@ -1,12 +1,31 @@
-<form (ngSubmit)="onSubmit()">
-  <div>
-    <label for="rut">RUT:</label>
-    <input type="text" id="rut" [(ngModel)]="rut" name="rut" required />
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-body">
+      <h1 class="card-title text-center">Validación de RUT</h1>
+      <p class="card-text text-center">Ingrese el RUT que desea validar</p>
+      <form (ngSubmit)="onSubmit()" class="mt-4">
+        <div class="mb-3">
+          <input type="text" id="rut" [(ngModel)]="rut" name="rut" class="form-control rut-input"
+            placeholder="12345678-9" required>
+          <div *ngIf="advertencia" class="text-warning mt-2">
+            <i class="fas fa-exclamation-circle"></i> {{ advertencia }}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success rut-button">Validar</button>
+      </form>
+      <div *ngIf="cargando" class="text-center mt-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+      <div *ngIf="resultado" class="mt-4">
+        <div *ngIf="resultado.valido" class="text-success">
+          <i class="fas fa-check-circle"></i> El RUT ingresado es válido
+        </div>
+        <div *ngIf="!resultado.valido" class="text-danger">
+          <i class="fas fa-times-circle"></i> El RUT ingresado no es válido
+        </div>
+      </div>
+    </div>
   </div>
-  <button type="submit">Validar</button>
-</form>
-
-<div *ngIf="resultado">
-  <p *ngIf="resultado.valido">El RUT es válido.</p>
-  <p *ngIf="!resultado.valido">El RUT es inválido.</p>
 </div>
