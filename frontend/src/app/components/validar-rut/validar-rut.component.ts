@@ -8,7 +8,7 @@ import { ValidarRutService } from '../../services/validar-rut.service';
 })
 export class ValidarRutComponent {
   rut: string = '';
-  resultado: { valido: boolean } | null = null;
+  resultado: { valido: boolean, mensaje: string } | null = null;
   advertencia: string | null = null;
   error: string | null = null;
   cargando: boolean = false;
@@ -19,6 +19,7 @@ export class ValidarRutComponent {
     // Resetea advertencia y resultado
     this.advertencia = null;
     this.resultado = null;
+    this.error = null;
 
     // Limpiar el RUT de puntos y guiones
     const rutLimpio = this.rut.replace(/[.\-]/g, '');
@@ -44,7 +45,7 @@ export class ValidarRutComponent {
       },
       (error) => {
         console.error('Error al validar RUT:', error);
-        this.error = 'Error al procesar la validación del RUT.';
+        this.resultado = { valido: false, mensaje: error.message };
         this.cargando = false;  // Detiene el spinner
       }
     );
