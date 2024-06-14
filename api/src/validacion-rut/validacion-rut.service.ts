@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import logger from '../utils/logger';
 
 @Injectable()
 export class ValidacionRutService {
   private limpiarRut(rut: string): string {
     const rutLimpio = rut.replace(/[.\-]/g, ''); // Elimina los caracteres que no están permitidos
-    console.log('RUT después de limpiar:', rutLimpio);
+    logger.info('RUT después de limpiar:', rutLimpio);
     return rutLimpio;
   }
 
   private esFormatoValido(rut: string): boolean {
     const formatoValido = /^[0-9]{7,8}[0-9Kk]$/.test(rut); // Se asegura de que la cadena tenga el formato de RUT
-    console.log('RUT es de formato válido:', formatoValido, 'para RUT:', rut); // Muestra si el formato es válido
+    logger.info('RUT es de formato válido:', formatoValido, 'para RUT:', rut); // Muestra si el formato es válido
     return formatoValido;
   }
 
   validarRut(rut: string): boolean {
     rut = this.limpiarRut(rut); // Limpia primero el RUT
     if (!this.esFormatoValido(rut)) {
-      console.log('Falló la validación de formato para:', rut); // Registra cuando un RUT falla la validación de formato
+      logger.warn('Falló la validación de formato para:', rut); // Registra cuando un RUT falla la validación de formato
       return false;
     }
     const cuerpoRut = rut.slice(0, -1);
@@ -52,7 +53,7 @@ export class ValidacionRutService {
     } else {
       digitoVerificadorEsperado = digitoEsperado.toString();
     }
-    console.log(
+    logger.info(
       'Calculado DV:',
       digitoVerificadorEsperado,
       'Real DV:',
