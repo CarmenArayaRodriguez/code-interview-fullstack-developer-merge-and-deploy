@@ -1,1 +1,77 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales */
+body {
+  background-color: #E3F2FD;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  background-color: #FFFFFF;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.rut-input {
+  text-align: center;
+  width: 250px;
+  margin: 0 auto;
+}
+
+.rut-button {
+  display: block;
+  width: 250px;
+  margin: 10px auto 0;
+}
+
+.btn-success {
+  background-color: #81c784;
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #66bb6a;
+}
+
+.text-success {
+  color: #2e7d32;
+}
+
+.text-danger {
+  color: #D32F2F;
+}
+
+.container .text-warning {
+  color: #E65100;
+
+}
+
+.text-warning {
+  color: #E65100 !important;
+}
+
+.text-success,
+.text-danger,
+.text-warning {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+/* Estilos para el spinner */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
