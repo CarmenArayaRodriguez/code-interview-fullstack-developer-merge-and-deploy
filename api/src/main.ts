@@ -18,7 +18,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
 
-  app.enableCors(); // Habilita CORS para todas las rutas y todos los orígenes
+  // Habilitar CORS
+  app.enableCors({
+    origin: 'http://localhost:4200', // La URL del frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   await app.listen(3000);
 }
 

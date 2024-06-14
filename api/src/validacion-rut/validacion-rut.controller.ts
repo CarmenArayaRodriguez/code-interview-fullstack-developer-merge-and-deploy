@@ -3,6 +3,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ValidacionRutService } from './validacion-rut.service';
 import logger from '../utils/logger';
+
 @ApiTags('validacion')
 @Controller()
 export class ValidacionRutController {
@@ -29,7 +30,10 @@ export class ValidacionRutController {
     description: 'RUT inválido',
     schema: { example: { mensaje: 'El RUT es inválido.', valido: false } },
   })
-  validarRut(@Body('rut') rut: string, @Res() res: Response): void {
+  async validarRut(
+    @Body('rut') rut: string,
+    @Res() res: Response,
+  ): Promise<void> {
     logger.info('Recibido RUT para validación:', rut);
     try {
       if (!rut) {
@@ -40,8 +44,8 @@ export class ValidacionRutController {
         return;
       }
 
-      const esValido = this.validacionRutService.validarRut(rut);
-      if (esValido) {
+      const resultado = await this.validacionRutService.validarRut(rut);
+      if (resultado.valido) {
         logger.info('RUT es válido:', rut);
         res
           .status(HttpStatus.OK)

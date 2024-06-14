@@ -1,8 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Rut } from './entities/rut.entity';
+import { Repository } from 'typeorm';
 import logger from '../utils/logger';
 
 @Injectable()
 export class ValidacionRutService {
+  constructor(
+    @InjectRepository(Rut)
+    private readonly rutRepository: Repository<Rut>,
+    // eslint-disable-next-line prettier/prettier
+  ) { }
+
   private limpiarRut(rut: string): string {
     const rutLimpio = rut.replace(/[.\-]/g, ''); // Elimina los caracteres que no están permitidos
     logger.info('RUT después de limpiar:', rutLimpio);
@@ -15,16 +24,29 @@ export class ValidacionRutService {
     return formatoValido;
   }
 
-  validarRut(rut: string): boolean {
+  async validarRut(rut: string): Promise<{ valido: boolean }> {
     rut = this.limpiarRut(rut); // Limpia primero el RUT
     if (!this.esFormatoValido(rut)) {
       logger.warn('Falló la validación de formato para:', rut); // Registra cuando un RUT falla la validación de formato
-      return false;
+      return { valido: false };
     }
     const cuerpoRut = rut.slice(0, -1);
     const digitoVerificador = rut.slice(-1);
 
-    return this.validarDigitoVerificador(cuerpoRut, digitoVerificador);
+    const esValido = this.validarDigitoVerificador(
+      cuerpoRut,
+      digitoVerificador,
+    );
+
+    // Guarda la validación en la base de datos
+    const nuevaRut = this.rutRepository.create({
+      cuerpo: cuerpoRut,
+      digitoVerificador,
+      valido: esValido,
+    });
+    await this.rutRepository.save(nuevaRut);
+
+    return { valido: esValido };
   }
 
   private validarDigitoVerificador(
