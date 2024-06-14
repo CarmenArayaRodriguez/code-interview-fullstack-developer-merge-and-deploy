@@ -19,7 +19,7 @@ async function bootstrap() {
   SwaggerModule.setup('api-docs', app, document);
 
   app.enableCors(); // Habilita CORS para todas las rutas y todos los orígenes
-  await app.listen(3000);
+  await app.listen(3001);
 }
 
 bootstrap();
