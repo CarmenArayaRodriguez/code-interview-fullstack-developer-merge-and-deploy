@@ -8,50 +8,35 @@ import { ValidarRutService } from '../../services/validar-rut.service';
 })
 export class ValidarRutComponent {
   rut: string = '';
-  resultado: { valido: boolean, mensaje: string } | null = null;
   advertencia: string | null = null;
-  error: string | null = null;
   cargando: boolean = false;
+  resultado: { valido: boolean; mensaje: string } | null = null;
+  error: string | null = null;
 
   constructor(private validarRutService: ValidarRutService) { }
 
-  onSubmit() {
-    // Resetea advertencia y resultado
+  onSubmit(): void {
     this.advertencia = null;
     this.resultado = null;
     this.error = null;
+    this.cargando = true;
 
-    // Limpiar el RUT de puntos y guiones
-    const rutLimpio = this.rut.replace(/[.\-]/g, '');
-
-    // Verifica caracteres no permitidos
-    if (!/^[0-9Kk]*$/.test(rutLimpio)) {
+    if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(this.rut)) {
       this.advertencia = 'Solo se permiten números, guion y K.';
+      this.cargando = false;
       return;
     }
 
-    // Verifica formato del RUT
-    if (!this.esFormatoValido(rutLimpio)) {
-      this.advertencia = 'El formato del RUT no es válido. Debe tener 7-8 dígitos y un dígito verificador.';
-      return;
-    }
-
-    this.cargando = true; // Inicia el spinner
-
-    this.validarRutService.validarRut(rutLimpio).subscribe(
-      (response) => {
+    this.validarRutService.validarRut(this.rut).subscribe({
+      next: (response) => {
         this.resultado = response;
-        this.cargando = false;  // Detiene el spinner
+        this.cargando = false;
       },
-      (error) => {
-        console.error('Error al validar RUT:', error);
-        this.resultado = { valido: false, mensaje: error.message };
-        this.cargando = false;  // Detiene el spinner
+      error: (err) => {
+        this.error = 'Error del servidor';
+        this.cargando = false;
+        console.error('Error al validar RUT:', err);
       }
-    );
-  }
-
-  private esFormatoValido(rut: string): boolean {
-    return /^[0-9]{7,8}[0-9Kk]$/.test(rut); // Se asegura de que la cadena tenga el formato de RUT
+    });
   }
 }
