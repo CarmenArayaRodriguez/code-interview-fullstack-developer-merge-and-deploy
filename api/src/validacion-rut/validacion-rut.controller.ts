@@ -2,7 +2,7 @@ import { Controller, Post, Body, HttpStatus, Res } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ValidacionRutService } from './validacion-rut.service';
-
+import logger from '../utils/logger';
 @ApiTags('validacion')
 @Controller()
 export class ValidacionRutController {
@@ -30,10 +30,10 @@ export class ValidacionRutController {
     schema: { example: { mensaje: 'El RUT es inválido.', valido: false } },
   })
   validarRut(@Body('rut') rut: string, @Res() res: Response): void {
-    console.log('Recibido RUT para validación:', rut);
+    logger.info('Recibido RUT para validación:', rut);
     try {
       if (!rut) {
-        console.log('RUT no proporcionado');
+        logger.warn('RUT no proporcionado');
         res
           .status(HttpStatus.BAD_REQUEST)
           .json({ mensaje: 'RUT es requerido', valido: false });
@@ -42,18 +42,18 @@ export class ValidacionRutController {
 
       const esValido = this.validacionRutService.validarRut(rut);
       if (esValido) {
-        console.log('RUT es válido:', rut);
+        logger.info('RUT es válido:', rut);
         res
           .status(HttpStatus.OK)
           .json({ mensaje: 'El RUT es válido.', valido: true });
       } else {
-        console.log('RUT es inválido:', rut);
+        logger.warn('RUT es inválido:', rut);
         res
           .status(HttpStatus.BAD_REQUEST)
           .json({ mensaje: 'El RUT es inválido.', valido: false });
       }
     } catch (error) {
-      console.error('Error interno del servidor durante la validación:', error);
+      logger.error('Error interno del servidor durante la validación:', error);
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ mensaje: 'Error interno del servidor', valido: false });
